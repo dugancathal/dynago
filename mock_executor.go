@@ -49,10 +49,11 @@ type MockExecutor struct {
 	BatchWriteItemCall   *MockExecutorCall
 	BatchWriteItemError  error
 
-	QueryCalled      bool
-	QueryCall        *MockExecutorCall
-	QueryError       error
-	QueryResultItems []Document
+	QueryCalled           bool
+	QueryCall             *MockExecutorCall
+	QueryError            error
+	QueryResultItems      []Document
+	QueryLastEvaluatedKey Document
 
 	UpdateItemCalled bool
 	UpdateItemCall   *MockExecutorCall
@@ -84,7 +85,8 @@ type MockExecutorCall struct {
 	Ascending              bool
 	Limit                  uint
 
-	BatchWrites BatchWriteTableMap
+	BatchWrites       BatchWriteTableMap
+	ExclusiveStartKey Document
 }
 
 func (e *MockExecutor) BatchWriteItem(batchWrite *BatchWrite) (*BatchWriteResult, error) {
@@ -147,9 +149,10 @@ func (e *MockExecutor) Query(query *Query) (*QueryResult, error) {
 		Ascending:                 ascending,
 		ConsistentRead:            consistent,
 		Limit:                     query.req.Limit,
+		ExclusiveStartKey:         query.req.ExclusiveStartKey,
 	})
 
-	return &QueryResult{Items: e.QueryResultItems}, e.QueryError
+	return &QueryResult{Items: e.QueryResultItems, LastEvaluatedKey: e.QueryLastEvaluatedKey}, e.QueryError
 }
 
 func (e *MockExecutor) UpdateItem(update *UpdateItem) (*UpdateItemResult, error) {
