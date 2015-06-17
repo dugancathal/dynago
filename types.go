@@ -88,6 +88,14 @@ func (d Document) GetStringSet(key string) StringSet {
 	}
 }
 
+func (d Document) GetList(key string) List {
+	if d[key] != nil {
+		return d[key].(List)
+	} else {
+		return List{}
+	}
+}
+
 /*
 Helper to get a Time from a document.
 

@@ -135,3 +135,13 @@ func TestDocumentGetBoolReturnsFalseWhenTheKeyIsNotPresent(t *testing.T) {
 	doc := dynago.Document{}
 	assert.Equal(t, false, doc.GetBool("name"))
 }
+
+func TestDocumentGetListReturnsTheListValue(t *testing.T) {
+	doc := dynago.Document{"vals": dynago.List{"val1", "val2"}}
+	assert.Equal(t, dynago.List{"val1", "val2"}, doc.GetList("vals"))
+}
+
+func TestDocumentGetListReturnsEmptyListWhenTheKeyIsNotSet(t *testing.T) {
+	doc := dynago.Document{}
+	assert.Equal(t, dynago.List{}, doc.GetList("notarealkey"))
+}
